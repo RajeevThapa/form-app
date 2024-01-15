@@ -48,6 +48,14 @@ pipeline {
             }
         }
 
+        stage('test') {
+            steps {
+                script {
+                    sh "kubectl config view"
+                }
+            }
+        }
+
         stage('Deploy to Minikube') {
             steps {
                 script {
