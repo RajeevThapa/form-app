@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: form-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: form-app
+  template:
+    metadata:
+      labels:
+        app: form-app
+    spec:
+      containers:
+      - name: form-app-container
+        image: rajeevmagar/form:latest
+        ports:
+        - containerPort: 80
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: form-app-service
+spec:
+  selector:
+    app: form-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
