@@ -52,7 +52,8 @@ pipeline {
             steps {
                 script {
                     // Apply the updated Kubernetes manifest to Minikube
-                    sh "kubectl apply -f ${K8S_MANIFEST_PATH}"
+                    // sh "kubectl apply -f ${K8S_MANIFEST_PATH}"
+                    kubernetesDeploy (configs: 'K8S_MANIFEST_PATH', kubeconfigId: 'acf81900-3757-4df8-aff8-2044af36821f')
                 }
             }
         }
