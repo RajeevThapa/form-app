@@ -49,7 +49,7 @@ pipeline {
                     """
 
                     // Commit and push changes to Git repo
-                    sshagent(credentials['4b2106fc-c96a-489d-b8a7-9dc887caf143']) {
+                    sshagent(credentials:['4b2106fc-c96a-489d-b8a7-9dc887caf143']) {
                         sh """
                             git add ${K8S_MANIFEST_PATH}
                             git commit -m "Update image tag in kubernetes manifest | Jenkins pipeline"
