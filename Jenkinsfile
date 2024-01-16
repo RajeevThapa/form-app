@@ -8,6 +8,7 @@ pipeline {
         DOCKERFILE = 'Dockerfile'   // Path to Dockerfile.
         DOCKERHUB_CREDENTIALS = 'docker-hub-credentials'    // Credentials of Dockerhub stored in Jenkins
         K8S_MANIFEST_PATH = 'k8s/deployment.yaml'
+        GIT_SSH_COMMAND = 'ssh -o StrictHostKeyChecking=no'
     }
 
     stages {
