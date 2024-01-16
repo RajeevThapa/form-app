@@ -42,8 +42,20 @@ pipeline {
             steps {
                 script {
                     // Update the Kubernetes manifest with the new image version
-                    // sh "sed -i 's|image: ${IMG_NAME}:.*$|image: ${IMG_NAME}:${IMG_TAG}|' ${K8S_MANIFEST_PATH}"
-                    sh "sed -i 's|image: \${IMG_NAME}:.*\$|image: \${IMG_NAME}:\${IMG_TAG}|' ${K8S_MANIFEST_PATH}"
+                    sh """
+                        cat ${K8S_MANIFEST_PATH}
+                        sed -i 's|image: \${IMG_NAME}:.*\$|image: \${IMG_NAME}:\${IMG_TAG}|' ${K8S_MANIFEST_PATH}
+                        cat ${K8S_MANIFEST_PATH}
+                    """
+
+                    // Commit and push changes to Git repo
+                    sshagent(credentials['4b2106fc-c96a-489d-b8a7-9dc887caf143']) {
+                        sh """
+                            git add ${K8S_MANIFEST_PATH}
+                            git commit -m "Update image tag in kubernetes manifest | Jenkins pipeline"
+                            git push git@github.com:RajeevThapa/form-app.git HEAD:main
+                        """
+                    }
                 }
             }
         }
