@@ -44,7 +44,7 @@ pipeline {
                     // Update the Kubernetes manifest with the new image version
                     sh """
                         cat ${K8S_MANIFEST_PATH}
-                        sed -i 's|image: \${IMG_NAME}:.*\$|image: \${IMG_NAME}:\${IMG_TAG}|' ${K8S_MANIFEST_PATH}
+                        sed -i 's|image: ${IMG_NAME}:.*\$|image: ${IMG_NAME}:${IMG_TAG}|' ${K8S_MANIFEST_PATH}
                         cat ${K8S_MANIFEST_PATH}
                     """
 
