@@ -9,6 +9,7 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'docker-hub-credentials'    // Credentials of Dockerhub stored in Jenkins
         K8S_MANIFEST_PATH = 'k8s/deployment.yaml'
         GIT_SSH_COMMAND = 'ssh -o StrictHostKeyChecking=no'
+        ANSIBLE_HOSTS = ''
     }
 
     stages {
@@ -48,16 +49,7 @@ pipeline {
                         sed -i 's|image: ${IMG_NAME}:.*\$|image: ${IMG_NAME}:${IMG_TAG}|' ${K8S_MANIFEST_PATH}
                         cat ${K8S_MANIFEST_PATH}
                     """
-
-                    // Commit and push changes to Git repo
-                    // sshagent(credentials:['4b2106fc-c96a-489d-b8a7-9dc887caf143']) {
-                    //     sh """
-                    //         git add ${K8S_MANIFEST_PATH}
-                    //         git commit -m "Update image tag in kubernetes manifest | Jenkins pipeline"
-                    //         git push git@github.com:RajeevThapa/form-app.git HEAD:main
-                    //     """
-                    // }
-
+                    
                     sshagent(credentials:['4b2106fc-c96a-489d-b8a7-9dc887caf143']) {
                         sh """
                             git add ${K8S_MANIFEST_PATH}
@@ -69,22 +61,24 @@ pipeline {
             }
         }
 
-        stage('test') {
-            steps {
-                script {
-                    sh "kubectl config view"
-                }
-            }
-        }
-
         stage('Deploy to Minikube') {
             steps {
                 script {
                     // Apply the updated Kubernetes manifest to Minikube
                     // sh "kubectl apply -f ${K8S_MANIFEST_PATH}"
-                    kubernetesDeploy (configs: 'K8S_MANIFEST_PATH', kubeconfigId: 'acf81900-3757-4df8-aff8-2044af36821f')
+                    // kubernetesDeploy (configs: 'K8S_MANIFEST_PATH', kubeconfigId: 'acf81900-3757-4df8-aff8-2044af36821f')
+                    sh "kubectl apply -f ${K8S_MANIFEST_PATH}"
                 }
             }
         }
+
+        stage('Deploy with Ansible') {
+            steps {
+                script {
+                    // Use Ansible to deploy and configure application
+                    sh 'ansible-playbook -i $ANSIBLE_HOSTS ansible/deploy.yml'
+                }
+            }
+        }     
     }
 }
