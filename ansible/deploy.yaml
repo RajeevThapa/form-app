@@ -1,0 +1,6 @@
+---
+- name: Deploy Web App to Kubernetes
+  hosts: servers
+  tasks:
+    - name: Run kubectl apply
+      command: kubectl apply -f k8s/deployment.yaml
