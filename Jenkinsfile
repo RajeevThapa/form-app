@@ -9,7 +9,8 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'docker-hub-credentials'    // Credentials of Dockerhub stored in Jenkins
         K8S_MANIFEST_PATH = 'k8s/deployment.yaml'
         GIT_SSH_COMMAND = 'ssh -o StrictHostKeyChecking=no'
-        ANSIBLE_HOSTS = ''
+        ANSIBLE_HOSTS = 'servers'
+        KUBE_CONFIG_CREDENTIALS = credentials('0f802d42-0ac0-4164-b8f4-98b5b40e3dd4')
     }
 
     stages {
@@ -64,10 +65,15 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 script {
+                    // Use KUBE_CONFIG_CREDENTIALS in your kubectl commands
+                    withCredentials([kubeconfig(credentialsId: KUBE_CONFIG_CREDENTIALS, pathVariable: 'KUBECONFIG')]) {
+                        // sh "kubectl config use-context your-kube-context"
+                        // sh "kubectl apply -f k8s/deployment.yaml -n my-app-namespace"
                     // Apply the updated Kubernetes manifest to Minikube
                     // sh "kubectl apply -f ${K8S_MANIFEST_PATH}"
                     // kubernetesDeploy (configs: 'K8S_MANIFEST_PATH', kubeconfigId: 'acf81900-3757-4df8-aff8-2044af36821f')
-                    sh "kubectl apply -f ${K8S_MANIFEST_PATH}"
+                    sh "kubectl apply -f ${K8S_MANIFEST_PATH} -n form-app-namespace"
+                    }
                 }
             }
         }
