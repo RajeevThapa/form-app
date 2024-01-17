@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: form-app-container
-        image: rajeevmagar/form:v1.0.23
+        image: rajeevmagar/form:v1.0.1
         ports:
         - containerPort: 80
 
